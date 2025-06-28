@@ -3,8 +3,9 @@ import {nanoid} from "nanoid"
 import dotenv from "dotenv"
 import connectDB from "./src/config/monogo.config.js"
 import  urlSchema from "./src/models/short_url.model.js"
-import shortUrl from "./src/models/short_url.model.js"
-
+import short_url from "./src/models/short_url.model.js"
+import  {redirectFromShortUrl} from "./src/controllers/short_url.controller.js"
+import {errorHandler} from "./src/utils/errorHandler.js"
 
 dotenv.config("./.env");
 
@@ -15,30 +16,12 @@ const app =express();
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
-app.post("/api/create",(req,res)=>{
-    const {url}=req.body
-    const shortUrl =nanoid(7)
-    const newUrl =new urlSchema({
-        full_url:url,
-        short_url:shortUrl
-    })
-    newUrl.save()
-    console.log(url);
-    res.send(nanoid(7));
-})
+app.use("/api/create",short_url)
 
-app.get("/:id",async(req,res)=>{
-    const {id}=req.params
-    const url =await urlSchema.findOne({short_url:id})
-    if(url){
-        res.redirect(url.full_url)
+app.get("/:id",redirectFromShortUrl)
 
-    }
-    else{
-        res.status(404).send("Not Found")
+app.use(errorHandler)
 
-    }
-})
 
 app.listen(3000,()=>{
     connectDB()
