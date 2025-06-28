@@ -6,6 +6,7 @@ import  urlSchema from "./src/models/short_url.model.js"
 import short_url from "./src/models/short_url.model.js"
 import  {redirectFromShortUrl} from "./src/controllers/short_url.controller.js"
 import {errorHandler} from "./src/utils/errorHandler.js"
+import cors from "cors"
 
 dotenv.config("./.env");
 
@@ -13,6 +14,7 @@ dotenv.config("./.env");
 
 const app =express();
 
+app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
